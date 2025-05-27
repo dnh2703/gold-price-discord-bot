@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "setup": "bun run setup.js",
-    "build": "bun run tsc",
+    "build": "bun run tsc -p tsconfig.prod.json",
     "start": "bun run dist/index.js",
     "dev": "bun run src/index.ts",
     "watch": "bun run tsc -w",
-    "test": "bun test",
+    "test": "bun test src/",
     "prepare": "husky",
     "lint:commit": "commitlint --from HEAD~1 --to HEAD --verbose"
   },
