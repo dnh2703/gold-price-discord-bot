@@ -41,12 +41,24 @@ A professional Discord bot built with Node.js and TypeScript that automatically 
    ```
 
 3. **Set up environment variables**
-   Create a `.env` file in the root directory:
-   ```env
-   DISCORD_TOKEN=your_discord_bot_token_here
-   CHANNEL_ID=your_channel_id_here
-   TIMEZONE=Asia/Ho_Chi_Minh
+   
+   **For local development:**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your actual values
    ```
+   
+   **For GitHub Actions/CI:**
+   - Go to your repository Settings → Secrets and variables → Actions
+   - Add these repository secrets:
+     - `DISCORD_TOKEN`: Your Discord bot token
+     - `CHANNEL_ID`: Your Discord channel ID
+     - `TIMEZONE`: Your preferred timezone (optional)
+   
+   **For other platforms:**
+   - **Heroku**: `heroku config:set DISCORD_TOKEN=your_token`
+   - **Railway**: `railway variables set DISCORD_TOKEN=your_token`
+   - **Vercel**: `vercel env add DISCORD_TOKEN`
 
 4. **Build the project**
    
@@ -223,6 +235,25 @@ fix(api): handle API timeout errors gracefully
 docs(readme): update installation instructions
 chore(deps): update discord.js to latest version
 ```
+
+## 🚀 CI/CD with GitHub Actions
+
+This project includes a GitHub Actions workflow for automated testing and deployment:
+
+### **Workflow Features:**
+- ✅ **Automated testing** on every push and pull request
+- ✅ **Bun setup** for fast builds and tests
+- ✅ **Environment variables** from GitHub secrets
+- ✅ **Deployment** on main branch pushes
+
+### **Required GitHub Secrets:**
+Set these in your repository settings:
+- `DISCORD_TOKEN`: Your Discord bot token
+- `CHANNEL_ID`: Target Discord channel ID
+- `TIMEZONE`: Bot timezone (optional)
+
+### **Workflow File:**
+The workflow is defined in `.github/workflows/deploy.yml`
 
 ### Adding New Features
 
