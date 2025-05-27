@@ -1,10 +1,10 @@
 # 🥇 Gold Price Discord Bot
 
-A professional Discord bot built with Node.js and TypeScript that automatically sends daily gold price updates at 14:08 Vietnam time and responds to manual commands.
+A professional Discord bot built with Node.js and TypeScript that automatically sends daily gold price updates at 9:00 AM time and responds to manual commands.
 
 ## ✨ Features
 
-- 📅 **Daily Scheduled Updates**: Automatically sends gold price updates every day at 14:08 Vietnam time
+- 📅 **Daily Scheduled Updates**: Automatically sends gold price updates every day at 9:00 AM time
 - 💰 **Real-time Gold Prices**: Fetches current gold prices from reliable APIs
 - 📊 **Price Change Tracking**: Shows 24-hour price changes and percentages
 - 🤖 **Manual Commands**: Users can request gold prices on-demand
