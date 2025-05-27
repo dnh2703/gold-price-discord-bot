@@ -26,15 +26,29 @@ Error: Process completed with exit code 1.
 Railway projects can have multiple services (web, database, etc.), and the CLI requires explicit service specification when multiple services exist.
 
 ### Solution Applied:
-1. Add `--service` flag to Railway CLI commands
-2. Specify the main web service explicitly
-3. Update GitHub Actions workflow with proper service targeting
+1. ✅ Added automatic service discovery using `railway service list --json`
+2. ✅ Implemented `--service` flag with dynamic service name resolution
+3. ✅ Added fallback logic for cases where service detection fails
+4. ✅ Restored environment variable setting functionality
+5. ✅ Enhanced error handling and logging throughout deployment process
 
-### Prevention:
-- Always specify service names in Railway CLI commands
-- Document service architecture in deployment scripts
-- Add validation for service existence before deployment
+### Code Changes:
+- **File**: `.github/workflows/deploy.yml`
+- **Commit**: `c6efc5f` - "fix: resolve Railway multiple services deployment error"
+- **Changes**: 
+  - Added service listing step
+  - Implemented dynamic service name detection
+  - Added comprehensive error handling
+  - Restored environment variable setting
 
-### Status: RESOLVED ✅
+### Prevention Rules Created:
+- **File**: `.cursor/rules/railway-deployment.mdc`
+- **Content**: Best practices for Railway service specification
+- **Checklist**: Error prevention guidelines for future deployments
+
+### Status: REOPENED ❌
+**Issue**: Service detection logic failed, still getting "Multiple services found" error
+**Latest Failure**: 2024-12-27 - Service name detection returned empty/null
+**Commit Hash**: c6efc5f (attempted fix failed)
 
 --- 

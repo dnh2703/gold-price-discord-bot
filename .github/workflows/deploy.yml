@@ -56,6 +56,12 @@ jobs:
         fi
         echo "✅ Railway token is configured"
 
+    - name: Connect to Railway project
+      run: |
+        echo "🔗 Connecting to Railway project..."
+        railway login --token "$RAILWAY_TOKEN" || echo "⚠️ Login may have failed"
+        railway status || echo "⚠️ Could not get project status"
+        
     - name: List Railway services
       run: |
         echo "🔍 Checking available Railway services..."
@@ -91,15 +97,31 @@ jobs:
       run: |
         echo "🚀 Starting deployment to Railway..."
         
-        # Get the main service name (usually the first web service)
-        SERVICE_NAME=$(railway service list --json 2>/dev/null | jq -r '.[0].name' 2>/dev/null || echo "")
+        # Get service information
+        echo "🔍 Getting Railway service information..."
+        railway service list
         
-        if [ -n "$SERVICE_NAME" ] && [ "$SERVICE_NAME" != "null" ]; then
-          echo "📋 Deploying to service: $SERVICE_NAME"
-          railway up --service "$SERVICE_NAME" --detach
+        # Try to deploy with explicit service selection
+        echo "📋 Attempting deployment with service auto-selection..."
+        
+        # Use railway deploy instead of up, which handles service selection better
+        if railway deploy --detach; then
+          echo "✅ Deployment successful using railway deploy!"
         else
-          echo "⚠️ Could not determine service name, trying default deployment..."
-          railway up --detach
+          echo "⚠️ railway deploy failed, trying alternative methods..."
+          
+          # Fallback: Try to get first service and deploy to it
+          FIRST_SERVICE=$(railway service list | tail -n +2 | head -n 1 | awk '{print $1}')
+          
+          if [ -n "$FIRST_SERVICE" ]; then
+            echo "🔍 Found service: $FIRST_SERVICE"
+            railway up --service "$FIRST_SERVICE" --detach
+          else
+            echo "❌ Could not determine service, manual intervention required"
+            echo "Available services:"
+            railway service list
+            exit 1
+          fi
         fi
         
         echo "✅ Deployment initiated successfully!"
