@@ -3,22 +3,40 @@ import * as cron from "node-cron";
 import axios from "axios";
 import * as dotenv from "dotenv";
 
-// Load environment variables
-dotenv.config();
+// Load environment variables from .env file if it exists (for local development)
+// In production (Railway, GitHub Actions), environment variables are provided by the platform
+try {
+  dotenv.config();
+} catch (error) {
+  // Ignore errors if .env file doesn't exist (normal in production)
+  console.log("ℹ️ No .env file found, using system environment variables");
+}
 
 // Bot configuration
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 const CHANNEL_ID = process.env.CHANNEL_ID;
 const TIMEZONE = process.env.TIMEZONE || "Asia/Ho_Chi_Minh";
 
+// Debug environment variables (without exposing sensitive data)
+console.log("🔍 Environment Check:");
+console.log(`- DISCORD_TOKEN: ${DISCORD_TOKEN ? '✅ Set' : '❌ Missing'}`);
+console.log(`- CHANNEL_ID: ${CHANNEL_ID ? '✅ Set' : '❌ Missing'}`);
+console.log(`- TIMEZONE: ${TIMEZONE}`);
+console.log(`- NODE_ENV: ${process.env.NODE_ENV || 'not set'}`);
+console.log(`- Platform: ${process.platform}`);
+
 // Validate required environment variables
 if (!DISCORD_TOKEN) {
-  console.error("❌ DISCORD_TOKEN là bắt buộc trong file .env");
+  console.error("❌ DISCORD_TOKEN is required!");
+  console.error("For local development: Add DISCORD_TOKEN to your .env file");
+  console.error("For production: Set DISCORD_TOKEN in your deployment platform (Railway, GitHub Secrets, etc.)");
   process.exit(1);
 }
 
 if (!CHANNEL_ID) {
-  console.error("❌ CHANNEL_ID là bắt buộc trong file .env");
+  console.error("❌ CHANNEL_ID is required!");
+  console.error("For local development: Add CHANNEL_ID to your .env file");
+  console.error("For production: Set CHANNEL_ID in your deployment platform (Railway, GitHub Secrets, etc.)");
   process.exit(1);
 }
 
