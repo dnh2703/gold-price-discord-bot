@@ -9,7 +9,9 @@
     "start": "bun run dist/index.js",
     "dev": "bun run src/index.ts",
     "watch": "bun run tsc -w",
-    "test": "bun test"
+    "test": "bun test",
+    "prepare": "husky",
+    "lint:commit": "commitlint --from HEAD~1 --to HEAD --verbose"
   },
   "keywords": [
     "discord",
@@ -27,9 +29,12 @@
     "node-cron": "^4.0.7"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@types/node": "^22.15.21",
     "@types/node-cron": "^3.0.11",
     "bun-types": "latest",
+    "husky": "^9.1.7",
     "typescript": "^5.8.3"
   }
 }
