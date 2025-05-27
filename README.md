@@ -236,24 +236,89 @@ docs(readme): update installation instructions
 chore(deps): update discord.js to latest version
 ```
 
-## 🚀 CI/CD with GitHub Actions
+## 🚀 Deployment & CI/CD
 
-This project includes a GitHub Actions workflow for automated testing and deployment:
+This project supports multiple deployment platforms with automated CI/CD using GitHub Actions.
 
-### **Workflow Features:**
-- ✅ **Automated testing** on every push and pull request
-- ✅ **Bun setup** for fast builds and tests
-- ✅ **Environment variables** from GitHub secrets
-- ✅ **Deployment** on main branch pushes
+### **Railway Deployment (Recommended)**
 
-### **Required GitHub Secrets:**
-Set these in your repository settings:
-- `DISCORD_TOKEN`: Your Discord bot token
-- `CHANNEL_ID`: Target Discord channel ID
-- `TIMEZONE`: Bot timezone (optional)
+Railway provides the easiest deployment experience with automatic builds and deployments.
 
-### **Workflow File:**
-The workflow is defined in `.github/workflows/deploy.yml`
+#### **Quick Setup:**
+1. **Run the setup script:**
+   ```bash
+   ./scripts/setup-railway.sh
+   ```
+
+2. **Or follow manual steps:**
+   - Create a Railway project and connect your GitHub repo
+   - Set environment variables in Railway dashboard
+   - Add `RAILWAY_TOKEN` to GitHub repository secrets
+   - Push to main branch to trigger deployment
+
+#### **Railway Features:**
+- ✅ **Automatic deployments** from GitHub
+- ✅ **Built-in environment variables** management
+- ✅ **Real-time logs** and monitoring
+- ✅ **Zero-downtime deployments**
+- ✅ **Free tier available**
+
+📖 **Detailed Railway Guide:** See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)
+
+### **GitHub Actions Workflow**
+
+The CI/CD pipeline automatically:
+
+#### **On Every Push/PR:**
+- ✅ **Installs dependencies** with Bun
+- ✅ **Builds the project** (TypeScript compilation)
+- ✅ **Runs tests** to ensure code quality
+- ✅ **Validates environment** setup
+
+#### **On Main Branch Push:**
+- ✅ **Deploys to Railway** using official CLI container
+- ✅ **Validates Railway token** before deployment
+- ✅ **Provides deployment status** and notifications
+
+#### **Required GitHub Secrets:**
+Set these in your repository Settings → Secrets and variables → Actions:
+
+| Secret | Description | Required For |
+|--------|-------------|--------------|
+| `RAILWAY_TOKEN` | Railway project token | Railway deployment |
+| `DISCORD_TOKEN` | Discord bot token | Testing (optional) |
+| `CHANNEL_ID` | Discord channel ID | Testing (optional) |
+
+#### **Workflow Files:**
+- `.github/workflows/deploy.yml` - Main CI/CD pipeline
+- `nixpacks.toml` - Railway build configuration
+
+### **Alternative Deployment Platforms**
+
+#### **Heroku**
+```bash
+# Install Heroku CLI and login
+heroku create your-bot-name
+heroku config:set DISCORD_TOKEN=your_token
+heroku config:set CHANNEL_ID=your_channel_id
+git push heroku main
+```
+
+#### **Vercel**
+```bash
+# Install Vercel CLI
+vercel
+vercel env add DISCORD_TOKEN
+vercel env add CHANNEL_ID
+vercel --prod
+```
+
+#### **Docker**
+```bash
+# Build and run with Docker
+docker build -t gold-bot .
+docker run -e DISCORD_TOKEN=your_token -e CHANNEL_ID=your_channel_id gold-bot
+```
 
 ### Adding New Features
 
