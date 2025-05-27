@@ -169,20 +169,59 @@ gold-price-discord-bot/
 
 **With Bun (recommended):**
 ```bash
-bun run build    # Compile TypeScript to JavaScript
-bun run start    # Start the compiled bot
-bun run dev      # Start with native TypeScript support
-bun run watch    # Watch for changes and recompile
-bun test         # Run tests with Bun's built-in test runner
+bun run build       # Compile TypeScript to JavaScript
+bun run start       # Start the compiled bot
+bun run dev         # Start with native TypeScript support
+bun run watch       # Watch for changes and recompile
+bun test            # Run tests with Bun's built-in test runner
+bun run lint:commit # Check commit message format
 ```
 
 **Or with npm:**
 ```bash
-npm run build    # Compile TypeScript to JavaScript
-npm run start    # Start the compiled bot
-npm run dev      # Start with native TypeScript support
-npm run watch    # Watch for changes and recompile
-npm test         # Run tests
+npm run build       # Compile TypeScript to JavaScript
+npm run start       # Start the compiled bot
+npm run dev         # Start with native TypeScript support
+npm run watch       # Watch for changes and recompile
+npm test            # Run tests
+npm run lint:commit # Check commit message format
+```
+
+### Commit Conventions
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) enforced by commitlint and Husky:
+
+**Format**: `type(scope): description`
+
+**Allowed types**:
+- `feat`: New features
+- `fix`: Bug fixes
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `test`: Adding or updating tests
+- `chore`: Maintenance tasks
+- `ci`: CI/CD changes
+- `build`: Build system changes
+- `perf`: Performance improvements
+- `revert`: Reverting changes
+
+**Allowed scopes**:
+- `build`: Build system/tooling
+- `deps`: Dependencies
+- `bot`: Bot functionality
+- `api`: API integration
+- `config`: Configuration
+- `docs`: Documentation
+- `ci`: CI/CD
+- `test`: Testing
+
+**Examples**:
+```bash
+feat(bot): add new gold price alert command
+fix(api): handle API timeout errors gracefully
+docs(readme): update installation instructions
+chore(deps): update discord.js to latest version
 ```
 
 ### Adding New Features
