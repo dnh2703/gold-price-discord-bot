@@ -108,12 +108,11 @@ jobs:
         # Deploy using service flag to avoid interactive prompts
         echo "📋 Deploying to Railway with service specification..."
         
-        # Try common service names for Discord bots
-        SERVICE_NAMES=("web" "app" "discord-bot" "gold-price-discord-bot" "main" "bot" "service")
-        
+        # Try common service names for Discord bots (POSIX-compliant approach)
         DEPLOYMENT_SUCCESS=false
         
-        for service_name in "${SERVICE_NAMES[@]}"; do
+        # Try each service name one by one
+        for service_name in web app discord-bot gold-price-discord-bot main bot service; do
           echo "🔍 Trying to deploy to service: $service_name"
           
           if railway up --service "$service_name" --detach; then
@@ -126,7 +125,7 @@ jobs:
         done
         
         # If all service names failed, try without service flag as last resort
-        if [ "$DEPLOYMENT_SUCCESS" = false ]; then
+        if [ "$DEPLOYMENT_SUCCESS" = "false" ]; then
           echo "⚠️ All service names failed, trying default deployment..."
           
           if railway up --detach; then

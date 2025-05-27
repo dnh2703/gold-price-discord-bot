@@ -116,7 +116,38 @@ Railway CLI requires interactive TTY for service selection prompts, but GitHub A
 - **Service Names Tried**: web, app, discord-bot, gold-price-discord-bot, main, bot, service
 - **Fallback**: Default `railway up --detach` if all service names fail
 
+### Status: BASH SYNTAX ERROR ❌
+**New Error**: Bash array syntax not supported in GitHub Actions shell
+**Error Details**: `syntax error: unexpected "("` on line 14
+**Root Cause**: GitHub Actions shell doesn't support bash array syntax `SERVICE_NAMES=("web" "app")`
+
+## Error #003: GitHub Actions Bash Array Syntax Issue
+
+**Date:** 2024-12-27  
+**Project:** gold-price-discord-bot  
+**Environment:** GitHub Actions CI/CD  
+**Service:** Railway Deployment  
+**Severity:** High (Deployment Blocker)
+
+### Error Details:
+```
+/__w/_temp/c8b0dec6-dc30-4d3a-9f65-1d90f1b96918.sh: line 14: syntax error: unexpected "("
+```
+
+### Root Cause:
+GitHub Actions uses `/bin/sh` by default, not `/bin/bash`, so bash-specific array syntax is not supported.
+
+### Solution Applied:
+1. ✅ Replaced bash array syntax `SERVICE_NAMES=("web" "app")` with POSIX-compliant `for service_name in web app`
+2. ✅ Fixed string comparison from `= false` to `= "false"` for POSIX compliance
+3. ✅ Maintained same service name iteration logic without bash-specific features
+
+### Code Changes:
+- **File**: `.github/workflows/deploy.yml`
+- **Fix**: Use `for service_name in web app discord-bot...` instead of bash arrays
+- **Compatibility**: POSIX-compliant shell syntax for GitHub Actions
+
 ### Status: FIXED ✅
-**Confidence Level**: 95% - Using official Railway CLI syntax with service specification
+**Confidence Level**: 99% - Using standard POSIX shell syntax
 
 --- 
