@@ -63,33 +63,32 @@ jobs:
         railway whoami || echo "⚠️ Could not verify Railway authentication"
         railway status || echo "⚠️ Could not get project status"
         
-    - name: Check Railway project info
+    - name: Verify Railway connection
       run: |
-        echo "🔍 Checking Railway project information..."
-        railway status || echo "⚠️ Could not get project status"
-        railway --help || echo "⚠️ Could not get Railway help"
+        echo "🔍 Verifying Railway connection..."
+        railway whoami || echo "⚠️ Could not verify Railway authentication"
 
     - name: Set Railway Environment Variables
       run: |
         echo "🔧 Setting environment variables in Railway..."
         
-        # Set environment variables in Railway using modern syntax
+        # Set environment variables using correct Railway CLI syntax
         if [ -n "$DISCORD_TOKEN" ]; then
-          railway variables --set DISCORD_TOKEN="$DISCORD_TOKEN" || railway env set DISCORD_TOKEN="$DISCORD_TOKEN" || echo "⚠️ Failed to set DISCORD_TOKEN"
+          railway variables --set "DISCORD_TOKEN=$DISCORD_TOKEN" || echo "⚠️ Failed to set DISCORD_TOKEN"
           echo "✅ DISCORD_TOKEN set in Railway"
         else
           echo "⚠️ DISCORD_TOKEN not found in GitHub Secrets"
         fi
         
         if [ -n "$CHANNEL_ID" ]; then
-          railway variables --set CHANNEL_ID="$CHANNEL_ID" || railway env set CHANNEL_ID="$CHANNEL_ID" || echo "⚠️ Failed to set CHANNEL_ID"
+          railway variables --set "CHANNEL_ID=$CHANNEL_ID" || echo "⚠️ Failed to set CHANNEL_ID"
           echo "✅ CHANNEL_ID set in Railway"
         else
           echo "⚠️ CHANNEL_ID not found in GitHub Secrets"
         fi
         
         if [ -n "$TIMEZONE" ]; then
-          railway variables --set TIMEZONE="$TIMEZONE" || railway env set TIMEZONE="$TIMEZONE" || echo "⚠️ Failed to set TIMEZONE"
+          railway variables --set "TIMEZONE=$TIMEZONE" || echo "⚠️ Failed to set TIMEZONE"
           echo "✅ TIMEZONE set in Railway"
         else
           echo "ℹ️ TIMEZONE not set, using default"
@@ -99,34 +98,37 @@ jobs:
       run: |
         echo "🚀 Starting deployment to Railway..."
         
-        # Check Railway CLI version and available commands
+        # Check Railway CLI version and project status
         echo "🔍 Railway CLI version:"
         railway --version || echo "Could not get version"
         
-        # Try the modern Railway deployment approach
-        echo "📋 Attempting deployment..."
+        echo "📋 Railway project status:"
+        railway status || echo "Could not get status"
         
-        # Method 1: Try railway up (modern syntax)
+        # According to Railway docs, if there are multiple services, CLI will prompt for service selection
+        # We need to handle this by either linking to a service or specifying it
+        echo "🔗 Attempting to link to a service..."
+        
+        # Try to link to the first available service
+        railway service || echo "⚠️ Could not link to service automatically"
+        
+        # Deploy using the correct Railway CLI command
+        echo "📋 Deploying to Railway..."
+        
+        # Method 1: Try railway up with detach (this is the correct command per docs)
         if railway up --detach; then
-          echo "✅ Deployment successful using railway up!"
+          echo "✅ Deployment successful!"
         else
-          echo "⚠️ railway up failed, trying railway deploy..."
+          echo "⚠️ Detached deployment failed, trying interactive deployment..."
           
-          # Method 2: Try railway deploy
-          if railway deploy --detach; then
-            echo "✅ Deployment successful using railway deploy!"
+          # Method 2: Try railway up without detach (will show logs)
+          if timeout 300 railway up; then
+            echo "✅ Deployment successful!"
           else
-            echo "⚠️ railway deploy failed, trying without detach..."
-            
-            # Method 3: Try without detach flag
-            if railway up; then
-              echo "✅ Deployment successful!"
-            else
-              echo "❌ All deployment methods failed"
-              echo "Railway status:"
-              railway status
-              exit 1
-            fi
+            echo "❌ Deployment failed"
+            echo "Railway status:"
+            railway status
+            exit 1
           fi
         fi
         

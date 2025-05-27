@@ -61,4 +61,23 @@ Railway projects can have multiple services (web, database, etc.), and the CLI r
 **Latest Failure**: 2024-12-27 - "Service 'list' not found" - Railway CLI syntax issue
 **Error**: Railway CLI doesn't recognize `railway service list` command
 
+### CRITICAL FIX APPLIED (Commit: daf3be3):
+**Root Cause**: Using outdated Railway CLI syntax
+**Solution**: 
+1. ✅ Removed `railway service list` (deprecated command)
+2. ✅ Fixed environment variable syntax: `railway variables --set` or `railway env set`
+3. ✅ Simplified authentication using RAILWAY_TOKEN environment variable
+4. ✅ Added multiple deployment method fallbacks
+5. ✅ Enhanced debugging with `railway --version` and `railway whoami`
+
+**Status**: CRITICAL SYNTAX FIX DEPLOYED 🚨
+
+### FINAL FIX BASED ON OFFICIAL DOCS (Railway CLI 4.5.2):
+**Documentation Reference**: https://docs.railway.com/guides/cli
+**Key Findings**:
+1. ✅ `railway up` supports `--service <SERVICE>` flag for multiple services
+2. ✅ `railway variables --set KEY=value` is correct syntax
+3. ✅ `railway deploy --detach` doesn't exist - only `railway up --detach`
+4. ✅ Need to link to service first or specify service in command
+
 --- 
