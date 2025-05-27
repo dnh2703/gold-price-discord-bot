@@ -55,17 +55,52 @@ jobs:
           exit 1
         fi
         echo "✅ Railway token is configured"
+
+    - name: List Railway services
+      run: |
+        echo "🔍 Checking available Railway services..."
+        railway service list || echo "⚠️ Could not list services, proceeding with deployment"
+
+    - name: Set Railway Environment Variables
+      run: |
+        echo "🔧 Setting environment variables in Railway..."
+        
+        # Set environment variables in Railway for the main service
+        if [ -n "$DISCORD_TOKEN" ]; then
+          railway variables set DISCORD_TOKEN="$DISCORD_TOKEN" || echo "⚠️ Failed to set DISCORD_TOKEN"
+          echo "✅ DISCORD_TOKEN set in Railway"
+        else
+          echo "⚠️ DISCORD_TOKEN not found in GitHub Secrets"
+        fi
+        
+        if [ -n "$CHANNEL_ID" ]; then
+          railway variables set CHANNEL_ID="$CHANNEL_ID" || echo "⚠️ Failed to set CHANNEL_ID"
+          echo "✅ CHANNEL_ID set in Railway"
+        else
+          echo "⚠️ CHANNEL_ID not found in GitHub Secrets"
+        fi
+        
+        if [ -n "$TIMEZONE" ]; then
+          railway variables set TIMEZONE="$TIMEZONE" || echo "⚠️ Failed to set TIMEZONE"
+          echo "✅ TIMEZONE set in Railway"
+        else
+          echo "ℹ️ TIMEZONE not set, using default"
+        fi
+
     - name: Deploy to Railway
       run: |
         echo "🚀 Starting deployment to Railway..."
         
-        # Verify Railway project connection
-        railway status
+        # Get the main service name (usually the first web service)
+        SERVICE_NAME=$(railway service list --json 2>/dev/null | jq -r '.[0].name' 2>/dev/null || echo "")
         
-        # Deploy using Railway CLI
-        # The --detach flag ensures the command doesn't wait for deployment to complete
-        # This prevents GitHub Actions from timing out on long deployments
-        railway up --detach
+        if [ -n "$SERVICE_NAME" ] && [ "$SERVICE_NAME" != "null" ]; then
+          echo "📋 Deploying to service: $SERVICE_NAME"
+          railway up --service "$SERVICE_NAME" --detach
+        else
+          echo "⚠️ Could not determine service name, trying default deployment..."
+          railway up --detach
+        fi
         
         echo "✅ Deployment initiated successfully!"
         echo "🔗 Check your Railway dashboard for deployment status"

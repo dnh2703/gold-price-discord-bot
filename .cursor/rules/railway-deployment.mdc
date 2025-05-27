@@ -1,0 +1,57 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Railway Deployment Rules
+
+## Service Specification Requirements
+
+### Rule: Always specify Railway service in deployment commands
+- **Context**: Railway projects with multiple services require explicit service targeting
+- **Pattern**: Use `--service <service_name>` flag with Railway CLI commands
+- **Rationale**: Prevents "Multiple services found" deployment errors
+
+### Implementation Guidelines:
+
+1. **Service Discovery**:
+   ```bash
+   # List available services first
+   railway service list
+   
+   # Get service name programmatically
+   SERVICE_NAME=$(railway service list --json | jq -r '.[0].name')
+   ```
+
+2. **Deployment Commands**:
+   ```bash
+   # Correct: Specify service explicitly
+   railway up --service "$SERVICE_NAME" --detach
+   
+   # Incorrect: Missing service specification
+   railway up --detach  # ❌ Fails with multiple services
+   ```
+
+3. **Environment Variables**:
+   ```bash
+   # Set variables for specific service if needed
+   railway variables set KEY="value" --service "$SERVICE_NAME"
+   ```
+
+### Error Prevention Checklist:
+- [ ] Always list services before deployment
+- [ ] Capture and validate service names
+- [ ] Include fallback logic for service detection
+- [ ] Add error handling for Railway CLI commands
+- [ ] Test deployment scripts with multiple services
+
+### Related Errors:
+- "Multiple services found. Please specify a service via the `--service` flag"
+- "Service not found" errors
+- Environment variable setting failures
+
+### Best Practices:
+1. Use JSON output for programmatic service detection
+2. Implement graceful fallbacks for service name resolution
+3. Add verbose logging for debugging deployment issues
+4. Validate Railway token and project access before deployment
