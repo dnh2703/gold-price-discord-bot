@@ -39,6 +39,9 @@ jobs:
     
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+      TIMEZONE: ${{ secrets.TIMEZONE }}
     
     steps:
     - name: Checkout code
@@ -53,9 +56,38 @@ jobs:
         fi
         echo "✅ Railway token is configured"
     
+    - name: Set Railway Environment Variables
+      run: |
+        echo "🔧 Setting environment variables in Railway..."
+        
+        # Set environment variables in Railway
+        if [ -n "$DISCORD_TOKEN" ]; then
+          railway variables set DISCORD_TOKEN="$DISCORD_TOKEN"
+          echo "✅ DISCORD_TOKEN set in Railway"
+        else
+          echo "⚠️ DISCORD_TOKEN not found in GitHub Secrets"
+        fi
+        
+        if [ -n "$CHANNEL_ID" ]; then
+          railway variables set CHANNEL_ID="$CHANNEL_ID"
+          echo "✅ CHANNEL_ID set in Railway"
+        else
+          echo "⚠️ CHANNEL_ID not found in GitHub Secrets"
+        fi
+        
+        if [ -n "$TIMEZONE" ]; then
+          railway variables set TIMEZONE="$TIMEZONE"
+          echo "✅ TIMEZONE set in Railway"
+        else
+          echo "ℹ️ TIMEZONE not set, using default"
+        fi
+
     - name: Deploy to Railway
       run: |
         echo "🚀 Starting deployment to Railway..."
+        
+        # Verify Railway project connection
+        railway status
         
         # Deploy using Railway CLI
         # The --detach flag ensures the command doesn't wait for deployment to complete
