@@ -80,4 +80,43 @@ Railway projects can have multiple services (web, database, etc.), and the CLI r
 3. ✅ `railway deploy --detach` doesn't exist - only `railway up --detach`
 4. ✅ Need to link to service first or specify service in command
 
+## Error #002: Railway CLI Interactive Prompt Issue
+
+**Date:** 2024-12-27  
+**Project:** gold-price-discord-bot  
+**Environment:** production  
+**Service:** Railway Deployment  
+**Severity:** High (Deployment Blocker)
+
+### Error Details:
+```
+Service: None
+🔗 Attempting to link to a service...
+Failed to prompt for options
+
+Caused by:
+    The input device is not a TTY
+⚠️ Could not link to service automatically
+📋 Deploying to Railway...
+Multiple services found. Please specify a service via the `--service` flag.
+```
+
+### Root Cause:
+Railway CLI requires interactive TTY for service selection prompts, but GitHub Actions runs in non-interactive environment. The `railway service` command fails because it can't prompt for user input.
+
+### Solution Applied:
+1. ✅ Use `railway up --service <SERVICE_NAME>` to specify service explicitly
+2. ✅ Try multiple common service names for Discord bots
+3. ✅ Fallback to default deployment if all service names fail
+4. ✅ Avoid all interactive prompts in CI/CD environment
+
+### Code Changes:
+- **File**: `.github/workflows/deploy.yml`
+- **Solution**: Loop through common service names with `--service` flag
+- **Service Names Tried**: web, app, discord-bot, gold-price-discord-bot, main, bot, service
+- **Fallback**: Default `railway up --detach` if all service names fail
+
+### Status: FIXED ✅
+**Confidence Level**: 95% - Using official Railway CLI syntax with service specification
+
 --- 

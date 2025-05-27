@@ -105,27 +105,35 @@ jobs:
         echo "📋 Railway project status:"
         railway status || echo "Could not get status"
         
-        # According to Railway docs, if there are multiple services, CLI will prompt for service selection
-        # We need to handle this by either linking to a service or specifying it
-        echo "🔗 Attempting to link to a service..."
+        # Deploy using service flag to avoid interactive prompts
+        echo "📋 Deploying to Railway with service specification..."
         
-        # Try to link to the first available service
-        railway service || echo "⚠️ Could not link to service automatically"
+        # Try common service names for Discord bots
+        SERVICE_NAMES=("web" "app" "discord-bot" "gold-price-discord-bot" "main" "bot" "service")
         
-        # Deploy using the correct Railway CLI command
-        echo "📋 Deploying to Railway..."
+        DEPLOYMENT_SUCCESS=false
         
-        # Method 1: Try railway up with detach (this is the correct command per docs)
-        if railway up --detach; then
-          echo "✅ Deployment successful!"
-        else
-          echo "⚠️ Detached deployment failed, trying interactive deployment..."
+        for service_name in "${SERVICE_NAMES[@]}"; do
+          echo "🔍 Trying to deploy to service: $service_name"
           
-          # Method 2: Try railway up without detach (will show logs)
-          if timeout 300 railway up; then
-            echo "✅ Deployment successful!"
+          if railway up --service "$service_name" --detach; then
+            echo "✅ Deployment successful to service: $service_name"
+            DEPLOYMENT_SUCCESS=true
+            break
           else
-            echo "❌ Deployment failed"
+            echo "⚠️ Service '$service_name' not found or deployment failed"
+          fi
+        done
+        
+        # If all service names failed, try without service flag as last resort
+        if [ "$DEPLOYMENT_SUCCESS" = false ]; then
+          echo "⚠️ All service names failed, trying default deployment..."
+          
+          if railway up --detach; then
+            echo "✅ Default deployment successful!"
+            DEPLOYMENT_SUCCESS=true
+          else
+            echo "❌ All deployment methods failed"
             echo "Railway status:"
             railway status
             exit 1
