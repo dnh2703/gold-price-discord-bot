@@ -59,35 +59,37 @@ jobs:
     - name: Connect to Railway project
       run: |
         echo "🔗 Connecting to Railway project..."
-        railway login --token "$RAILWAY_TOKEN" || echo "⚠️ Login may have failed"
+        # The RAILWAY_TOKEN should be automatically used by the CLI
+        railway whoami || echo "⚠️ Could not verify Railway authentication"
         railway status || echo "⚠️ Could not get project status"
         
-    - name: List Railway services
+    - name: Check Railway project info
       run: |
-        echo "🔍 Checking available Railway services..."
-        railway service list || echo "⚠️ Could not list services, proceeding with deployment"
+        echo "🔍 Checking Railway project information..."
+        railway status || echo "⚠️ Could not get project status"
+        railway --help || echo "⚠️ Could not get Railway help"
 
     - name: Set Railway Environment Variables
       run: |
         echo "🔧 Setting environment variables in Railway..."
         
-        # Set environment variables in Railway for the main service
+        # Set environment variables in Railway using modern syntax
         if [ -n "$DISCORD_TOKEN" ]; then
-          railway variables set DISCORD_TOKEN="$DISCORD_TOKEN" || echo "⚠️ Failed to set DISCORD_TOKEN"
+          railway variables --set DISCORD_TOKEN="$DISCORD_TOKEN" || railway env set DISCORD_TOKEN="$DISCORD_TOKEN" || echo "⚠️ Failed to set DISCORD_TOKEN"
           echo "✅ DISCORD_TOKEN set in Railway"
         else
           echo "⚠️ DISCORD_TOKEN not found in GitHub Secrets"
         fi
         
         if [ -n "$CHANNEL_ID" ]; then
-          railway variables set CHANNEL_ID="$CHANNEL_ID" || echo "⚠️ Failed to set CHANNEL_ID"
+          railway variables --set CHANNEL_ID="$CHANNEL_ID" || railway env set CHANNEL_ID="$CHANNEL_ID" || echo "⚠️ Failed to set CHANNEL_ID"
           echo "✅ CHANNEL_ID set in Railway"
         else
           echo "⚠️ CHANNEL_ID not found in GitHub Secrets"
         fi
         
         if [ -n "$TIMEZONE" ]; then
-          railway variables set TIMEZONE="$TIMEZONE" || echo "⚠️ Failed to set TIMEZONE"
+          railway variables --set TIMEZONE="$TIMEZONE" || railway env set TIMEZONE="$TIMEZONE" || echo "⚠️ Failed to set TIMEZONE"
           echo "✅ TIMEZONE set in Railway"
         else
           echo "ℹ️ TIMEZONE not set, using default"
@@ -97,34 +99,38 @@ jobs:
       run: |
         echo "🚀 Starting deployment to Railway..."
         
-        # Get service information
-        echo "🔍 Getting Railway service information..."
-        railway service list
+        # Check Railway CLI version and available commands
+        echo "🔍 Railway CLI version:"
+        railway --version || echo "Could not get version"
         
-        # Try to deploy with explicit service selection
-        echo "📋 Attempting deployment with service auto-selection..."
+        # Try the modern Railway deployment approach
+        echo "📋 Attempting deployment..."
         
-        # Use railway deploy instead of up, which handles service selection better
-        if railway deploy --detach; then
-          echo "✅ Deployment successful using railway deploy!"
+        # Method 1: Try railway up (modern syntax)
+        if railway up --detach; then
+          echo "✅ Deployment successful using railway up!"
         else
-          echo "⚠️ railway deploy failed, trying alternative methods..."
+          echo "⚠️ railway up failed, trying railway deploy..."
           
-          # Fallback: Try to get first service and deploy to it
-          FIRST_SERVICE=$(railway service list | tail -n +2 | head -n 1 | awk '{print $1}')
-          
-          if [ -n "$FIRST_SERVICE" ]; then
-            echo "🔍 Found service: $FIRST_SERVICE"
-            railway up --service "$FIRST_SERVICE" --detach
+          # Method 2: Try railway deploy
+          if railway deploy --detach; then
+            echo "✅ Deployment successful using railway deploy!"
           else
-            echo "❌ Could not determine service, manual intervention required"
-            echo "Available services:"
-            railway service list
-            exit 1
+            echo "⚠️ railway deploy failed, trying without detach..."
+            
+            # Method 3: Try without detach flag
+            if railway up; then
+              echo "✅ Deployment successful!"
+            else
+              echo "❌ All deployment methods failed"
+              echo "Railway status:"
+              railway status
+              exit 1
+            fi
           fi
         fi
         
-        echo "✅ Deployment initiated successfully!"
+        echo "✅ Deployment completed!"
         echo "🔗 Check your Railway dashboard for deployment status"
     
     - name: Deployment notification
