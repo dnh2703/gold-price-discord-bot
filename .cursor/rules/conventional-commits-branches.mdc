@@ -1,0 +1,165 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Conventional Commits & Branch Naming Rule (Λ)
+
+## Overview
+This rule enforces consistent commit messages and branch naming conventions across the project, building on the existing commitlint configuration.
+
+## Commit Message Convention
+
+### Format
+```
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Types (from commitlint.config.js)
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation only changes
+- **style**: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **perf**: A code change that improves performance
+- **test**: Adding missing tests or correcting existing tests
+- **build**: Changes that affect the build system or external dependencies
+- **ci**: Changes to CI configuration files and scripts
+- **chore**: Other changes that don't modify src or test files
+- **revert**: Reverts a previous commit
+
+### Scopes (from commitlint.config.js)
+- **build**: Build system changes
+- **deps**: Dependency updates
+- **bot**: Discord bot related changes
+- **api**: API related changes
+- **config**: Configuration changes
+- **docs**: Documentation changes
+- **ci**: CI/CD changes
+- **test**: Test related changes
+
+### Subject Rules
+- Use imperative mood ("add" not "added" or "adds")
+- No capitalization of first letter
+- No period (.) at the end
+- Maximum 90 characters
+- Be concise but descriptive
+
+### Examples
+```
+feat(bot): add slash command support
+fix(api): resolve rate limiting issue
+docs(readme): update installation instructions
+refactor(config): simplify environment variable handling
+test(bot): add unit tests for message handler
+chore(deps): update discord.js to v14.14.1
+```
+
+## Branch Naming Convention
+
+### Format
+```
+<type>/<short-description>
+```
+or optionally:
+```
+<type>/<scope>/<short-description>
+```
+
+### Branch Types
+- **feature/**: New features
+- **bugfix/**: Bug fixes
+- **hotfix/**: Critical fixes for production
+- **docs/**: Documentation updates
+- **refactor/**: Code refactoring
+- **test/**: Test additions/updates
+- **chore/**: Maintenance tasks
+- **release/**: Release preparation
+
+### Rules
+- Use lowercase letters
+- Use hyphens (-) to separate words
+- Keep descriptions short but meaningful
+- Use present tense verbs
+- Maximum 90 characters total
+
+### Examples
+```
+feature/slash-commands
+bugfix/rate-limit-handling
+hotfix/memory-leak
+docs/installation-guide
+refactor/env-variables
+test/message-handlers
+chore/discord-js-update
+release/v2.1.0
+```
+
+With optional scope:
+```
+feature/bot/slash-commands
+bugfix/api/rate-limit-handling
+hotfix/bot/memory-leak
+```
+
+## Implementation Guidelines
+
+### Pre-commit Hooks
+- Commitlint is already configured via `.husky/` and `commitlint.config.js`
+- Ensure all commits pass validation before pushing
+
+### Branch Protection
+- Main/master branch should require PR reviews
+- Enforce branch naming via GitHub branch protection rules
+- Require status checks to pass
+
+### Workflow Integration
+1. Create branch following naming convention
+2. Make commits following conventional format
+3. Open PR with descriptive title matching commit convention
+4. Squash merge to maintain clean history
+
+## Automation Triggers
+
+### When to Apply This Rule
+- **Always** when creating commits
+- **Always** when creating new branches
+- During code reviews
+- When setting up new repositories
+- When onboarding new team members
+
+### Integration with Other Rules
+- Works with existing commitlint configuration
+- Supports semantic versioning automation
+- Enables automated changelog generation
+- Facilitates CI/CD pipeline triggers
+
+## Error Prevention
+
+### Common Mistakes to Avoid
+- Using past tense in commit subjects ("added" → "add")
+- Capitalizing commit subjects
+- Adding periods to commit subjects
+- Using spaces in branch names
+- Creating overly long branch names
+- Missing scope when it would add clarity
+
+### Validation Checklist
+- [ ] Commit type is from approved list
+- [ ] Scope is relevant and from approved list (if used)
+- [ ] Subject is imperative mood, lowercase, no period
+- [ ] Branch name follows type/description format (scope optional)
+- [ ] Branch name uses hyphens, not spaces or underscores
+- [ ] Description is clear and concise
+
+## Benefits
+- Consistent project history
+- Automated semantic versioning
+- Clear change categorization
+- Improved collaboration
+- Better CI/CD integration
+- Easier debugging and rollbacks
