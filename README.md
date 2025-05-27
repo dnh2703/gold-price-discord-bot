@@ -16,8 +16,7 @@ A professional Discord bot built with Node.js and TypeScript that automatically 
 
 ### Prerequisites
 
-- Node.js 16.x or higher
-- npm or yarn
+- Bun 1.0 or higher (recommended) or Node.js 16.x or higher
 - A Discord bot token
 - A Discord server where you want to deploy the bot
 
@@ -30,6 +29,13 @@ A professional Discord bot built with Node.js and TypeScript that automatically 
    ```
 
 2. **Install dependencies**
+   
+   **With Bun (recommended):**
+   ```bash
+   bun install
+   ```
+   
+   **Or with npm:**
    ```bash
    npm install
    ```
@@ -43,16 +49,37 @@ A professional Discord bot built with Node.js and TypeScript that automatically 
    ```
 
 4. **Build the project**
+   
+   **With Bun:**
+   ```bash
+   bun run build
+   ```
+   
+   **Or with npm:**
    ```bash
    npm run build
    ```
 
 5. **Start the bot**
+   
+   **With Bun:**
+   ```bash
+   bun run start
+   ```
+   
+   **Or with npm:**
    ```bash
    npm start
    ```
 
    For development with auto-reload:
+   
+   **With Bun:**
+   ```bash
+   bun run dev
+   ```
+   
+   **Or with npm:**
    ```bash
    npm run dev
    ```
@@ -140,11 +167,22 @@ gold-price-discord-bot/
 
 ### Available Scripts
 
+**With Bun (recommended):**
+```bash
+bun run build    # Compile TypeScript to JavaScript
+bun run start    # Start the compiled bot
+bun run dev      # Start with native TypeScript support
+bun run watch    # Watch for changes and recompile
+bun test         # Run tests with Bun's built-in test runner
+```
+
+**Or with npm:**
 ```bash
 npm run build    # Compile TypeScript to JavaScript
 npm run start    # Start the compiled bot
-npm run dev      # Start with ts-node for development
+npm run dev      # Start with native TypeScript support
 npm run watch    # Watch for changes and recompile
+npm test         # Run tests
 ```
 
 ### Adding New Features

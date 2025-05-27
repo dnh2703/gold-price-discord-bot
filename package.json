@@ -4,12 +4,12 @@
   "description": "A Discord bot that sends daily gold price updates at 14:08 Vietnam time",
   "main": "dist/index.js",
   "scripts": {
-    "setup": "node setup.js",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
-    "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "bun run setup.js",
+    "build": "bun run tsc",
+    "start": "bun run dist/index.js",
+    "dev": "bun run src/index.ts",
+    "watch": "bun run tsc -w",
+    "test": "bun test"
   },
   "keywords": [
     "discord",
@@ -29,7 +29,7 @@
   "devDependencies": {
     "@types/node": "^22.15.21",
     "@types/node-cron": "^3.0.11",
-    "ts-node": "^10.9.2",
+    "bun-types": "latest",
     "typescript": "^5.8.3"
   }
 }
